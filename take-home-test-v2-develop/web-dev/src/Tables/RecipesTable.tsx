@@ -9,12 +9,15 @@ import { Box, Button } from "@mui/material";
 import { Recipe } from "../Types/Recipe";
 import { Ingredient } from "../Types/Ingredient";
 import { useMutationRecipeDelete } from "../Hooks/Mutation/RecipeMutation";
+import { useQueryValidIngredientList } from "../Hooks/Query/IngredientQuery";
 
 export function RecipesTable({ recipes }: { recipes: Recipe[] }): JSX.Element {
   const { mutateAsync: deleteRecipe } = useMutationRecipeDelete();
+  const { refetch: refetchValidIngredientList } = useQueryValidIngredientList();
 
   const handlerButtonDelete = async (recipe: Recipe) => {
     await deleteRecipe(recipe.id);
+    refetchValidIngredientList()
   };
 
   const computePriceByIngredient = (ingredients: Ingredient[]) => {

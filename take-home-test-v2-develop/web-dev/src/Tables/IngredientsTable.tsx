@@ -5,9 +5,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button } from "@mui/material";
-import { Ingredient } from "../Types/Ingredient";
+import { Box, Chip, Tooltip } from "@mui/material";
+import { Ingredient, IngredientType } from "../Types/Ingredient";
 import { useMutationIngredientDelete } from "../Hooks/Mutation/IngredientsMutation";
+
+import { ingredientChip } from "../shared/components/ingredients-related";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+
 
 export function IngredientTable({
   ingredients,
@@ -20,6 +27,25 @@ export function IngredientTable({
     await deleteIngredient(ingredient.id);
   };
 
+  const handleButtonEdit = (ingredient: Ingredient) => {};
+
+  const ingredientName = (ingredient: Ingredient) => {
+    if (!ingredient.type) {
+      return (
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <p>{ ingredient.name }</p>
+              <Tooltip title="Ingredient with no type would not be selectable in recipes">
+                <WarningAmberIcon sx={{ marginLeft: 2, color: 'red' }} />
+              </Tooltip>
+            </Box>
+          </>
+      )
+    }
+
+    return ingredient.name;
+  }
+
   return (
     <Box className="tableContainer">
       <TableContainer component={Paper}>
@@ -28,7 +54,8 @@ export function IngredientTable({
             <TableRow>
               <TableCell>My ingredients</TableCell>
               <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Delete</TableCell>
+              <TableCell align="right" sx={{ paddingRight: 9 }}>Type</TableCell>
+              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -37,14 +64,14 @@ export function IngredientTable({
                 key={row.name}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
+                <TableCell component="th" scope="row">{ ingredientName(row) }</TableCell>
                 <TableCell align="right">{row.price} €</TableCell>
                 <TableCell align="right">
-                  <Button onClick={() => handlerButtonDelete(row)}>
-                    DELETE
-                  </Button>
+                  { ingredientChip(row.type) }
+                </TableCell>
+                <TableCell align="right">
+                  <EditIcon onClick={() => handleButtonEdit(row)} sx={{ cursor: 'pointer', fontSize: 20 }} />
+                  <DeleteIcon onClick={() => handlerButtonDelete(row)} sx={{ cursor: 'pointer', color: 'red', fontSize: 20 }} />
                 </TableCell>
               </TableRow>
             ))}

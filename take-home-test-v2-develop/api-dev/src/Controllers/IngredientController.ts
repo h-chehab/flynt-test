@@ -1,4 +1,5 @@
 import { IngredientService } from "../Services/IngredientService";
+import { IngredientsForRecipesDomain } from "../Domains/Ingredients/IngredientsForRecipesDomain";
 
 export class IngredientController {
   public static async list(req: any, res: any, next: any): Promise<void> {
@@ -7,6 +8,16 @@ export class IngredientController {
       res.send(recipes);
     } catch (err) {
       console.error("[IngredientController.list] Error listing recipes", err);
+      res.send(500);
+    }
+  }
+
+  public static async validIngredientsList(req: any, res: any, next: any): Promise<void> {
+    try {
+      const validIngredients = await IngredientsForRecipesDomain.validIngredients();
+      res.send(validIngredients);
+    } catch (err) {
+      console.error("[IngredientController.validIngredientsList] Error listing recipes", err);
       res.send(500);
     }
   }

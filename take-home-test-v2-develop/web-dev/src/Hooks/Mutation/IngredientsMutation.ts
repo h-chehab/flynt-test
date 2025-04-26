@@ -5,16 +5,17 @@ import { Requests } from "../QueriesAndMutationList";
 export const useMutationIngredientCreate = (): UseMutationResult<
   any,
   unknown,
-  { name: string; price: number }
+  { name: string; price: number, type: string }
 > => {
   const clientQuery = useQueryClient();
 
   return useMutation(
     [Requests.createIngredient],
-    async ({ name, price }: { name: string; price: number }) => {
+    async ({ name, price, type }: { name: string; price: number, type: string }) => {
       return await axios.post(`/ingredient/create`, {
         name,
         price,
+        type
       });
     },
     {

@@ -4,15 +4,18 @@ import {
   Button,
   FormControl,
   TextField,
+  ListSubheader,
 } from "@mui/material";
 import { useState } from "react";
 import { CardCustom } from "../Components/CardCustom";
 import { Loader } from "../Components/Loader";
 import { useMutationRecipeCreate } from "../Hooks/Mutation/RecipeMutation";
-import { useQueryIngredientList } from "../Hooks/Query/IngredientQuery";
+import { useQueryValidIngredientList } from "../Hooks/Query/IngredientQuery";
 import { ErrorPage } from "../Pages/ErrorPage";
 import { Ingredient } from "../Types/Ingredient";
 import { OptionsMultiSelectType } from "../Types/OptionsMultiSelect";
+import { ingredientChip } from "../shared/components/ingredients-related";
+
 
 export function CreateRecipesForm(): JSX.Element {
   const [name, setName] = useState("");
@@ -22,7 +25,7 @@ export function CreateRecipesForm(): JSX.Element {
     OptionsMultiSelectType[]
   >([]);
   const { mutateAsync: createRecipe } = useMutationRecipeCreate();
-  const { data: ingredients, status, isLoading } = useQueryIngredientList();
+  const { data: ingredients, status, isLoading, refetch: refetchValidIngredientsList } = useQueryValidIngredientList();
 
   const resetFields = () => {
     setName("");
@@ -45,6 +48,7 @@ export function CreateRecipesForm(): JSX.Element {
     });
 
     resetFields();
+    refetchValidIngredientsList()
   };
 
   if (status === "error") {
@@ -83,10 +87,24 @@ export function CreateRecipesForm(): JSX.Element {
               multiple
               id="combo-box-demo"
               options={ingredients.map((e: Ingredient) => {
-                return { label: e.name, id: e.id };
+                return { label: e.name, id: e.id, type: e.type, price: e.price };
               })}
               renderInput={(params: any) => (
-                <TextField {...params} label="Ingredients" />
+                  <TextField {...params} label="Ingredients" />
+              )}
+              groupBy={(option) => option.type as string}
+              renderGroup={(params) => (
+                <div key={params.key}>
+                  <ListSubheader>{ingredientChip(params.group)}</ListSubheader> {/* Customize header here */}
+                  {params.children}
+                </div>
+              )}
+              renderOption={(props, option) => (
+                  <li {...props}>
+                    <div style={{ width: '100%', padding: '0px 24px', }}>
+                      {option.label}
+                    </div>
+                  </li>
               )}
             />
           </FormControl>

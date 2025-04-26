@@ -1,4 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+export enum IngredientType {
+  STARCH = "starch",
+  PROTEINS = "proteins",
+  VEGETABLE = "vegetable",
+}
 
 @Entity()
 export class Ingredient {
@@ -10,4 +15,10 @@ export class Ingredient {
 
   @Column()
   price: number;
+
+  @Column({
+    type: "enum",
+    enum: IngredientType
+  })
+  type: IngredientType;
 }

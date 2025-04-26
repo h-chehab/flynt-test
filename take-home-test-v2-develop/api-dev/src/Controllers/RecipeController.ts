@@ -1,4 +1,6 @@
-import { RecipeService } from "../Services/RecipeService";
+import {RecipeService} from "../Services/RecipeService";
+import {RecipeDomain} from "../Domains/Recipes/RecipesDomain";
+
 
 export class RecipeController {
   public static async list(req: any, res: any, next: any): Promise<void> {
@@ -13,17 +15,17 @@ export class RecipeController {
 
   public static async create(req: any, res: any, next: any): Promise<void> {
     try {
-      const recipe = await RecipeService.create(req.body);
-      res.send(recipe);
-    } catch (err) {
+      const recipe = await RecipeDomain.upsertRecipe(req.body);
+      res.status(200).json({ status: 200, recipe });
+    } catch (err: any) {
       console.error("[RecipeController.create] Error creating recipe", err);
-      res.send(500);
+      res.status(400).json({ statusCode: 400 , message: err.message });
     }
   }
 
   public static async update(req: any, res: any, next: any): Promise<void> {
     try {
-      const recipe = await RecipeService.update(req.body);
+      const recipe = await RecipeDomain.upsertRecipe(req.body, true);
       res.send(recipe);
     } catch (err) {
       console.error("[RecipeController.update] Error updating recipe", err);

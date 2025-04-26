@@ -19,6 +19,7 @@ ingredientRouter.get("/list", IngredientController.list);
 ingredientRouter.post("/create", IngredientController.create);
 ingredientRouter.put("/update", IngredientController.update);
 ingredientRouter.delete("/delete/:id", IngredientController.delete);
+ingredientRouter.get("/valid/list", IngredientController.validIngredientsList);
 
 // SHOPPING LIST
 const shoppingListRouter = Router();

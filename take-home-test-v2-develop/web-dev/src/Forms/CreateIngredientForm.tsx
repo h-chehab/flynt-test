@@ -1,33 +1,42 @@
-import { Box, Button, FormControl, TextField } from "@mui/material";
 import { useState } from "react";
+import { IngredientType } from "../Types/Ingredient";
 import { CardCustom } from "../Components/CardCustom";
 import { useMutationIngredientCreate } from "../Hooks/Mutation/IngredientsMutation";
+import { Box, Button, FormControl, TextField, Select, MenuItem, InputLabel } from "@mui/material";
 
 export function CreateIngredientForm({ fetchIngredients }: { fetchIngredients: Function }): JSX.Element {
   const { mutateAsync: createIngredient } = useMutationIngredientCreate();
 
+  const [type, setType] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState<number>(0);
 
   const resetFields = () => {
     setName("");
+    setType("");
     setPrice(0);
   };
 
   // Todo: Handle tag there
   const handlerSubmitNewIngredient = async () => {
-    if (name === undefined || name === "" || price === undefined) {
-      alert("Please fill all the fields");
-      return;
-    }
+    // if (name === undefined || name === "" || price === undefined) {
+    //   alert("Please fill all the fields");
+    //   return;
+    // }
+
     await createIngredient({
       name,
       price,
+      type
     });
 
     resetFields();
     fetchIngredients();
   };
+
+  const handleSelectChange = (event: any) => {
+    setType(event.target.value as string);
+  }
 
   return (
     <div id="create-recipes-form">
@@ -66,11 +75,27 @@ export function CreateIngredientForm({ fetchIngredients }: { fetchIngredients: F
             </span>
           </FormControl>
 
+          <FormControl fullWidth>
+            <InputLabel id="ingredient-type-select">Ingredient Type</InputLabel>
+            <Select
+                labelId="ingredient-type-select-label"
+                id="ingredient-select"
+                value={type}
+                label="Ingredient Type"
+                onChange={handleSelectChange}
+            >
+              <MenuItem value={IngredientType.STARCH}>{IngredientType.STARCH}</MenuItem>
+              <MenuItem value={IngredientType.PROTEINS}>{IngredientType.PROTEINS}</MenuItem>
+              <MenuItem value={IngredientType.VEGETABLE}>{IngredientType.VEGETABLE}</MenuItem>
+            </Select>
+          </FormControl>
+
           <FormControl margin="normal">
-            <Button onClick={handlerSubmitNewIngredient} variant="contained">
+            <Button onClick={handlerSubmitNewIngredient} variant="contained" disabled={!name || !price || !type}>
               Submit
             </Button>
           </FormControl>
+
         </CardCustom>
       </Box>
     </div>
