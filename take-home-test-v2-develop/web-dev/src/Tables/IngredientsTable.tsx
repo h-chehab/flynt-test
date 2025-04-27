@@ -17,17 +17,15 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 
 export function IngredientTable({
-  ingredients,
+  ingredients, setForm,
 }: {
-  ingredients: Ingredient[];
+  ingredients: Ingredient[], setForm: (ingredient: Ingredient) => void;
 }): JSX.Element {
   const { mutateAsync: deleteIngredient } = useMutationIngredientDelete();
 
   const handlerButtonDelete = async (ingredient: Ingredient) => {
     await deleteIngredient(ingredient.id);
   };
-
-  const handleButtonEdit = (ingredient: Ingredient) => {};
 
   const ingredientName = (ingredient: Ingredient) => {
     if (!ingredient.type) {
@@ -70,7 +68,7 @@ export function IngredientTable({
                   { ingredientChip(row.type) }
                 </TableCell>
                 <TableCell align="right">
-                  <EditIcon onClick={() => handleButtonEdit(row)} sx={{ cursor: 'pointer', fontSize: 20 }} />
+                  <EditIcon onClick={() => setForm(row)} sx={{ cursor: 'pointer', fontSize: 20 }} />
                   <DeleteIcon onClick={() => handlerButtonDelete(row)} sx={{ cursor: 'pointer', color: 'red', fontSize: 20 }} />
                 </TableCell>
               </TableRow>

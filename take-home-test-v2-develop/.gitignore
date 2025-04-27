@@ -5,4 +5,3 @@ api-dev/node_modules
 .env
 dist
 .idea
-Makefile

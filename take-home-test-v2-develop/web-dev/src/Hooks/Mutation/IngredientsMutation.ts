@@ -26,6 +26,31 @@ export const useMutationIngredientCreate = (): UseMutationResult<
   );
 };
 
+export const useMutationIngredientUpdate = (): UseMutationResult<
+  any,
+  unknown,
+  { id: number, name: string; price: number, type: string }
+> => {
+  const clientQuery = useQueryClient();
+
+  return useMutation(
+      [Requests.updateIngredient],
+      async ({ id, name, price, type }: { id: number, name: string; price: number, type: string }) => {
+        return await axios.put(`/ingredient/update`, {
+          id,
+          name,
+          price,
+          type
+        });
+      },
+      {
+        onSuccess: () => {
+          clientQuery.invalidateQueries(Requests.listRecipe);
+        },
+      }
+  );
+};
+
 export const useMutationIngredientDelete = (): UseMutationResult<
   any,
   unknown,

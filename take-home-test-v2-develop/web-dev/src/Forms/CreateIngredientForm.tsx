@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { IngredientType } from "../Types/Ingredient";
+import {useEffect, useState} from "react";
+import { Ingredient, IngredientType } from "../Types/Ingredient";
 import { CardCustom } from "../Components/CardCustom";
-import { useMutationIngredientCreate } from "../Hooks/Mutation/IngredientsMutation";
+import { useMutationIngredientCreate, useMutationIngredientUpdate } from "../Hooks/Mutation/IngredientsMutation";
 import { Box, Button, FormControl, TextField, Select, MenuItem, InputLabel } from "@mui/material";
 
-export function CreateIngredientForm({ fetchIngredients }: { fetchIngredients: Function }): JSX.Element {
+export function CreateIngredientForm({ fetchIngredients, ingredientToUpdate }: { fetchIngredients: Function, ingredientToUpdate: Ingredient | null }): JSX.Element {
   const { mutateAsync: createIngredient } = useMutationIngredientCreate();
+  const { mutateAsync: updateIngredient } = useMutationIngredientUpdate();
 
   const [type, setType] = useState("");
   const [name, setName] = useState("");
@@ -17,6 +18,15 @@ export function CreateIngredientForm({ fetchIngredients }: { fetchIngredients: F
     setPrice(0);
   };
 
+  useEffect(() => {
+    if (ingredientToUpdate) {
+      setName(ingredientToUpdate.name);
+      setType(ingredientToUpdate.type);
+      setPrice(ingredientToUpdate.price);
+    }
+  }, [ingredientToUpdate]);
+
+
   // Todo: Handle tag there
   const handlerSubmitNewIngredient = async () => {
     // if (name === undefined || name === "" || price === undefined) {
@@ -24,11 +34,9 @@ export function CreateIngredientForm({ fetchIngredients }: { fetchIngredients: F
     //   return;
     // }
 
-    await createIngredient({
-      name,
-      price,
-      type
-    });
+    !ingredientToUpdate
+        ? await createIngredient({ name, price, type })
+        : await updateIngredient({ ...ingredientToUpdate, name, price, type });
 
     resetFields();
     fetchIngredients();

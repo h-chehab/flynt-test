@@ -28,7 +28,6 @@ export class IngredientService {
     });
   }
 
-
   static async create(ingredient: Ingredient): Promise<Ingredient> {
     return await getRepository(Ingredient).save(ingredient);
   }
