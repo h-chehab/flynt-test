@@ -3,6 +3,8 @@ import {
   Box,
   Button,
   FormControl,
+  Alert,
+  Snackbar,
   TextField,
   ListSubheader,
 } from "@mui/material";
@@ -24,6 +26,11 @@ export function CreateRecipesForm(): JSX.Element {
   const [selectedIngredients, setSelectedIngredients] = useState<
     OptionsMultiSelectType[]
   >([]);
+  const [alertData, setAlertData]  = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info",
+  });
   const { mutateAsync: createRecipe } = useMutationRecipeCreate();
   const { data: ingredients, status, isLoading, refetch: refetchValidIngredientsList } = useQueryValidIngredientList();
 
@@ -34,21 +41,42 @@ export function CreateRecipesForm(): JSX.Element {
     setSelectedIngredients([]);
   };
 
+  const handleAlertClose = () => {
+    setAlertData({
+      open: false,
+      message: "",
+      severity: "info",
+    })
+  };
+
   const handlerSubmitNewRecipe = async () => {
     if (!name || !timeToCook || !numberOfPeople || !selectedIngredients) {
       alert("Please fill all the fields");
       return;
     }
 
-    await createRecipe({
-      name,
-      timeToCook,
-      numberOfPeople,
-      ingredients: selectedIngredients.map((e) => e.id),
-    });
+    try {
+      await createRecipe({
+        name,
+        timeToCook,
+        numberOfPeople,
+        ingredients: selectedIngredients.map((e) => e.id),
+      });
 
-    resetFields();
-    refetchValidIngredientsList()
+      setAlertData({
+        open: true,
+        severity: "success",
+        message: 'Recipe created successfully',
+      });
+      resetFields();
+      refetchValidIngredientsList()
+    } catch (error: any) {
+      setAlertData({
+        open: true,
+        severity: "error",
+        message: error.message,
+      });
+    }
   };
 
   if (status === "error") {
@@ -144,6 +172,12 @@ export function CreateRecipesForm(): JSX.Element {
             </Button>
           </FormControl>
         </CardCustom>
+
+        <Snackbar open={alertData.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} >
+          <Alert onClose={handleAlertClose} severity={alertData.severity} sx={{ width: '100%' }}>
+            { alertData.message }
+          </Alert>
+        </Snackbar>
       </Box>
     </div>
   );

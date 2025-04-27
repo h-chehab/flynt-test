@@ -45,9 +45,10 @@ I did not added more complexity regarding git structure with pull requests, comm
 - Maybe use more icon rather than plain text (more appealing). <br/><br />
 - Set internationalization for the front-end. I would suggest using i18n library. <br /><br />
 - Add filters in tables when needed. In our case, it might be interesting to filter ingredients by type. <br /><br />
+- When we delete an element we should have confirmation modal or any other kind of display before deleting it. <br /><br />
 - In a real life scenario, when we create an element via a form, we might want to close the form after the creation. <br /><br />
 - Never use alert in the front-end. It is prone to cross-site scripting (XSS) attacks. Use a notification system instead. <br /><br />
-- Add a notification system that would inform whenever an action is successful or not (with clear messages in case of server errors). <br /><br />
+- Add a robust notification system that would inform whenever an action is successful or not (with clear messages in case of server errors). <br /><br />
 - If possible, separate variable instantiation (I would place them at the beginning of the component function), from components methods.<br/><br />
 - In a more complex project, using a store would be necessary to store data that are necessary in many pages (if it is not raw data from api) or to avoid props drilling. <br /><br />
 - This is more subjective, but whenever it is possible I would regroup all api calls in the parent component (in our case ``` IngredientPage```...). This is better for readability and maintainability. <br /><br />
@@ -70,7 +71,8 @@ Front end bug is resolved by:
 - [X] Make Ingredient form editable
 - [X] Make ingredients with no type unselectable in recipe page
 - [X] Recipe creation / update are done with expected rules
-- [X] If an ingredient type is modified after a recipe creation, which makes it invalid, a message should appear on the recipe page. <br />
+- [X] If an ingredient type is modified after a recipe creation, which makes it invalid, a message should appear on the recipe page.
+- [X] Additions of notifications (weak system) for the sake of presentation.
 
 When I added the type to the ingredient table, I thought about the easy way out of setting vegetable as a default value.<br/>
 Only It would not have made sens for most ingredients.

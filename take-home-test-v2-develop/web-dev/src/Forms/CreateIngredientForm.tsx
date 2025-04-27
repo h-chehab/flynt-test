@@ -2,15 +2,21 @@ import {useEffect, useState} from "react";
 import { Ingredient, IngredientType } from "../Types/Ingredient";
 import { CardCustom } from "../Components/CardCustom";
 import { useMutationIngredientCreate, useMutationIngredientUpdate } from "../Hooks/Mutation/IngredientsMutation";
-import { Box, Button, FormControl, TextField, Select, MenuItem, InputLabel } from "@mui/material";
+import { Snackbar, Alert, Box, Button, FormControl, TextField, Select, MenuItem, InputLabel } from "@mui/material";
+
 
 export function CreateIngredientForm({ fetchIngredients, ingredientToUpdate }: { fetchIngredients: Function, ingredientToUpdate: Ingredient | null }): JSX.Element {
   const { mutateAsync: createIngredient } = useMutationIngredientCreate();
   const { mutateAsync: updateIngredient } = useMutationIngredientUpdate();
-
   const [type, setType] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState<number>(0);
+
+  const [alertData, setAlertData]  = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info",
+  });
 
   const resetFields = () => {
     setName("");
@@ -26,20 +32,39 @@ export function CreateIngredientForm({ fetchIngredients, ingredientToUpdate }: {
     }
   }, [ingredientToUpdate]);
 
+  const handleAlertClose = () => {
+    setAlertData({
+        open: false,
+        message: "",
+        severity: "info",
+    })
+  };
 
-  // Todo: Handle tag there
   const handlerSubmitNewIngredient = async () => {
     // if (name === undefined || name === "" || price === undefined) {
     //   alert("Please fill all the fields");
     //   return;
     // }
 
-    !ingredientToUpdate
-        ? await createIngredient({ name, price, type })
-        : await updateIngredient({ ...ingredientToUpdate, name, price, type });
+    try {
+       !ingredientToUpdate
+          ? await createIngredient({ name, price, type })
+          : await updateIngredient({ ...ingredientToUpdate, name, price, type });
 
-    resetFields();
-    fetchIngredients();
+      setAlertData({
+        open: true,
+        severity: "success",
+        message: `Ingredient ${ingredientToUpdate ? 'updated' : 'created'} successfully!`,
+      });
+      resetFields();
+      fetchIngredients();
+    } catch (error: any) {
+      setAlertData({
+        open: true,
+        severity: "error",
+        message: error.message
+      });
+    }
   };
 
   const handleSelectChange = (event: any) => {
@@ -105,6 +130,14 @@ export function CreateIngredientForm({ fetchIngredients, ingredientToUpdate }: {
           </FormControl>
 
         </CardCustom>
+
+
+        <Snackbar open={alertData.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} >
+            <Alert onClose={handleAlertClose} severity={alertData.severity} sx={{ width: '100%' }}>
+              { alertData.message }
+            </Alert>
+        </Snackbar>
+
       </Box>
     </div>
   );
