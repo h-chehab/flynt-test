@@ -16,6 +16,7 @@ export class RecipeDomain {
     // Todo: upsert recipes with another variable (boolean) that would handle update and ceration
     static async upsertRecipe(recipe: RecipeRequestData, isUpdate: boolean = false): Promise<Recipe> {
         // Fetch Ingredients from an Ids list
+        console.log('>>>>>>>>>>>>>>>>> in here');
         const fetchedIngredients = await IngredientService.getIngredientsByIdsList(recipe.ingredients);
 
         //  Sort ingredients by type
@@ -33,7 +34,7 @@ export class RecipeDomain {
 
         // Check if at least one of the proteins is used in a recipe.
         // This is important because Front-end check cannot be trusted by its own.
-        if (areProteinsFoundInRecipes > 0) throw new Error("You cannot use proteins that are already used in a recipe");
+        if (areProteinsFoundInRecipes[0].count > 0) throw new Error("You cannot use proteins that are already used in a recipe");
 
         // This variable is created there because, if there is an error above, we do not want to create a useless variable
         const recipeToCreate: Recipe = {...recipe, ingredients: fetchedIngredients} as Recipe;
